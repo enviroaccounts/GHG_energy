@@ -2,45 +2,47 @@ from dash import Dash, html, dcc
 import pandas as pd
 import plotly.graph_objects as go
 
-def load_forest_land_use_data():
-    """Loads forest land use change data."""
-    return pd.read_csv("static/data/LandUseChange_Forest_1990_2016.csv")
+def load_energy_consumption_data():
+    """Loads energy consumption data by location."""
+    data = pd.read_csv("static/data/GHG_emissions_energy_by_location.csv")
+    return data
 
-def prepare_forest_land_use_chart_data(data_df):
-    """Prepares data for the forest land use pie chart."""
-    land_use_data = data_df.iloc[0, 3:]  # land use columns start from the 4th column
-    labels = land_use_data.index.tolist()
-    values = land_use_data.values.tolist()
+def prepare_energy_consumption_chart_data(data_df):
+    """Prepares data for the energy consumption pie chart."""
+    # Skipping the 'Total' row and unnecessary columns
+    energy_data = data_df[:-1][['Substation', 'kWh']]
+    labels = energy_data['Substation'].tolist()
+    values = [float(value.replace(',', '').strip()) for value in energy_data['kWh']]
     return labels, values
 
-def create_forest_land_use_pie_chart(labels, values):
-    """Creates a pie chart for forest land use data."""
+def create_energy_consumption_pie_chart(labels, values):
+    """Creates a pie chart for energy consumption data."""
     return go.Figure(data=[go.Pie(labels=labels, values=values)])
 
-def setup_dash_layout(app, fig_pie_chart):
-    """Sets up the layout of the Dash app."""
+def setup_energy_consumption_layout(app, fig_pie_chart):
+    """Sets up the layout of the Dash app for energy consumption visualization."""
     app.layout = html.Div(children=[
         html.Div([
-            dcc.Graph(id='forest-land-use-pie-chart', figure=fig_pie_chart)
+            dcc.Graph(id='energy-consumption-pie-chart', figure=fig_pie_chart)
         ]),
         html.Div([  
-            html.H3(id='forest-land-use-pie-chart-description',children='Land uses converted from forestland since 1990.')
+            html.H3(id='energy-consumption-pie-chart-description', children='GHG Emissions From The Energy Sector by Location.')
         ])
-    ],id='forest-land-use-pie-chart-layout')
+    ], id='energy-consumption-pie-chart-layout')
 
 def create_app():
     """Creates and configures the Dash app."""
     app = Dash(__name__)
 
     # Load and prepare data
-    data_df = load_forest_land_use_data()
-    labels, values = prepare_forest_land_use_chart_data(data_df)
+    data_df = load_energy_consumption_data()
+    labels, values = prepare_energy_consumption_chart_data(data_df)
 
     # Create pie chart
-    fig_pie_chart = create_forest_land_use_pie_chart(labels, values)
+    fig_pie_chart = create_energy_consumption_pie_chart(labels, values)
 
     # Setup layout
-    setup_dash_layout(app, fig_pie_chart)
+    setup_energy_consumption_layout(app, fig_pie_chart)
 
     return app
 
