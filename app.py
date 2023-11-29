@@ -17,16 +17,24 @@ def prepare_energy_consumption_chart_data(data_df):
 
 def create_energy_consumption_pie_chart(labels, values):
     """Creates a pie chart for energy consumption data."""
-    return go.Figure(data=[go.Pie(labels=labels, values=values)])
+        # Add a title at the bottom
+    fig = go.Figure(data=[go.Pie(labels=labels, values=values)])
+    fig.update_layout(
+        title={
+            'text': "GHG Emissions From The Energy Sector by Location.",
+            'y': 0.08,  # Adjust the vertical position
+            'x': 0.5,  # Center the title horizontally
+            'xanchor': 'center',
+            'yanchor': 'bottom'
+        })
+
+    return fig
 
 def setup_energy_consumption_layout(app, fig_pie_chart):
     """Sets up the layout of the Dash app for energy consumption visualization."""
     app.layout = html.Div(children=[
         html.Div([
             dcc.Graph(id='energy-consumption-pie-chart', figure=fig_pie_chart)
-        ]),
-        html.Div([  
-            html.H3(id='energy-consumption-pie-chart-description', children='GHG Emissions From The Energy Sector by Location.')
         ])
     ], id='energy-consumption-pie-chart-layout')
 
