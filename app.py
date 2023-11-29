@@ -18,7 +18,14 @@ def prepare_energy_consumption_chart_data(data_df):
 def create_energy_consumption_pie_chart(labels, values):
     """Creates a pie chart for energy consumption data."""
         # Add a title at the bottom
-    fig = go.Figure(data=[go.Pie(labels=labels, values=values)])
+    fig = go.Figure(data=[go.Pie(
+        labels=labels,
+        values=values,
+        hoverinfo='label+percent',  
+        hovertemplate='<b>%{label}</b><br>%{percent:.0%}<br>Total: %{value}<extra></extra>',  
+        texttemplate='%{percent:.0%}'
+    )])
+
     fig.update_layout(
         title={
             'text': "GHG Emissions From The Energy Sector by Location.",
